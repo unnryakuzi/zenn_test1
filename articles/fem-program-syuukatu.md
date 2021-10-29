@@ -226,7 +226,7 @@ for i in range(Nx*Ny):
     K = K + elements[i].KmG
 ```
 
-## 節点力$\{F\}$を作成
+## 節点力を作成
 改めて全体剛性方程式は次の式で表されます。
 
 $$\begin{matrix}
