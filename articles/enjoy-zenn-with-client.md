@@ -2,7 +2,7 @@
 title: "深層学習を用いた女優類似度診断"
 emoji: "✨"
 type: "idea" # tech: 技術記事 / idea: アイデア
-topics: [OpenCV,画像認識]
+topics: [OpenCV,深層学習,画像認識]
 published: true
 ---
 # この記事で書かれていること
