@@ -1,5 +1,5 @@
 ---
-title: "どの女優に似てるかな？"
+title: "深層学習を用いた女優類似度診断"
 emoji: "✨"
 type: "idea" # tech: 技術記事 / idea: アイデア
 topics: [OpenCV,画像認識]
