@@ -1,140 +1,82 @@
 ---
-title: "えんじょい"
+title: "どの女優に似てるかな？アプリ(学生祭)"
 emoji: "✨"
-type: "tech" # tech: 技術記事 / idea: アイデア
-topics: [FEM]
-published: false
+type: "idea" # tech: 技術記事 / idea: アイデア
+topics: [OpenCV,keras]
+published: true
 ---
-# 有限要素法
-## 0.はじめに
-有限要素法(FEM)をpythonで実装しました．本記事ではFEMの説明を行うとともにコードの説明を行っていきます．
-私は現在大学生で来年には就活を控えています．「学生時代にうちこんだことはありますか？」と聞かれたときに「プログラミングを独学でしていました！」と答えるともりです．しかし面接官には，私がfor文を理解してドやっているのか，それともシステム管理やアプリ開発などおこなえるレベルなのかわかりません．よって今現在の私のレベルを伝えるべく執筆しました．
+# この記事で書かれていること
+学生祭で展示したアプリの紹介をしていきます．撮影した写真の目と口を補正し，その写真に対してAIがどの女優に似ているのかを教えてくれる顔認証アプリを作成しました．
 
-## 1.有限要素法とは
-有限要素法とは，あらゆる形状の物体や荷重条件でも，応力やひずみなどの分布を計算できる数値解析手法の一つである．
+# 誰に読んでもらいたいか
+この記事は誰かを楽しませるためにアプリを作ろうとしている人に向けて書いています．したがって技術的なことよりも，「〇〇な工夫をしたらどのような反応を頂けた」ということに重点をおいて説明していきます．
+
+# アプリの概要
+展示の際に使用した説明書を基に流れを説明していきます．
+[Step 1]
+展示物であるパソコンを来場者が見た時に写っている画面です．私もそうですが，来場者がこの時点で求めているものは，アプリのおもしろさよりも操作がシンプルで分かりやすいかどうかです．したがって「スペースキーを押すだけで大丈夫！」という説明はとても重要です．(スペースキーがどこのキーなのかも)
+![](https://storage.googleapis.com/zenn-user-upload/a9943aac40f2-20220116.jpg)
+
+[Step 2]
+ここでアプリの説明をしていきます．来場者は緊張しているのでアイスブレイクのために冗談を言いましょう．私は「右の5人の女優は全員自分の好みの女優なんですよ」と伝えると場が和みました．
+![](https://storage.googleapis.com/zenn-user-upload/cef825445580-20220116.jpg)
+
+[Step 3]
+まずプリクラ撮影を行っていきます．多くの女性は何も補正がないカメラを嫌う傾向があるのでプリクラ機能を実装しました．
+余談...ゲームセンターなどにあるプリクラの技術はとても高いことを知りました．私の技術力では逆に無加工の写真より，プリクラ写真の方が可愛くない事態となってしまいました．しかしながら，これはこれで笑ってくれたり，撮影への抵抗感が少なくなったので良かったです．
+当初はWindows上でSnowやB615などのアンドロイドカメラアプリを動かそうと考えていました(Androidエミュレーター)．しかしながらノートパソコンのスペックでは動作が重かったので断念しました．
+![](https://storage.googleapis.com/zenn-user-upload/928352cfc97a-20220116.jpg)
+
+[Step 4]
+褒めます．ベタな演出ですがかなりの確率で場が和みます．
+![](https://storage.googleapis.com/zenn-user-upload/d78382f1224c-20220116.jpg)
+
+[Step 5]
+プリクラ撮影の後は本題のAI診断です．「診断対象となる5人の女優って誰だったっけ？」となるころなので再度画面に表示して説明することが大事です．
+![](https://storage.googleapis.com/zenn-user-upload/0e741eb56086-20220116.jpg)
+
+[Step 6]
+結果を表示します．AI(深層学習)が最も似ている女優を教えてくれます．具体的には綾瀬はるかさんに56 %似ている．新垣結衣に13 %似ている...といった感じで合計が100 %になるように5人の女優の似ている度を算出し，そして最も確率が高かった女優名を表示しています．
+![](https://storage.googleapis.com/zenn-user-upload/6ee4e161a3dc-20220116.jpg)
+
+[Step 7]
+おわりです．スペースキーを押すと[Step 1]の画面に戻ります．
+![](https://storage.googleapis.com/zenn-user-upload/2f2849abd6db-20220116.jpg)
+
+# 技術的背景
+➀プリクラ機能
+目を大きくする機能を搭載したプリクラを作成しました．
+〇プリクラ補正
+[Step 1]
+OpenCVを用いて写真内の目がある範囲を四角形で囲み切り取る，
+[Step 2]
+目を大きくするために，切り取った範囲を拡大する．
+[Step 3]
+元の画像に拡大した範囲を張り付ける．
+[Step 4]
+元の画像と拡大して張り付けた画像の境界をぼかす．
+[＋α]
+口に対しても目と同様の手順で拡大する．
 
 
-## 2.仮想仕事の原理
-一般に自然現象はエネルギーが最も低い状態になろうとする．この原理は材料に力や変位が加えられたときに生じる弾性変形にも適用できる．すなわち材料に力や変位を与えたときその材料のポテンシャルエネルギーが最小になる形に変形することが，材料にとって最も安定した状態であり，力学的に正しい解である．これはポテンシャルエネルギーの極小解を求めることを意味する．有限要素法では仮想仕事の原理を用いて各節点の変位を求めていく．
-
-仮想仕事の原理を導出するためにまず，ポテンシャルエネルギーを求める，材料内に加わる表面力を$t$，物体力を$b$，変位を$u$とおく．
-
-外力によるポテンシャルエネルギー$T_{\text{out}}$と材料内に蓄えられるポテンシャルエネルギー$T_{\text{in}}$の和が全ポテンシャルエネルギー$\Pi$である．$\Pi$を式で表すと
-
-$$\Pi = T_{\text{in}} + T_{\text{out}}$$
-
-$$= \frac{1}{2}\int_{\Gamma}^{\ }{(\sigma_{x}\varepsilon_{x} + \sigma_{y}\varepsilon_{y} + \sigma_{z}\varepsilon_{z} +}\tau_{\text{xy}}\gamma_{\text{xy}} + \tau_{\text{yz}}\gamma_{\text{yz}} + \tau_{\text{xz}}\gamma_{\text{xz}})dV$$
-
-$$- \int_{S}^{\ }\left( ut_{x} + ut_{y} + ut_{z} \right)\text{dS}$$
-
-$$\begin{matrix}
- - \int_{\Gamma}^{\ }{(ub_{x} + ub_{y} +}ub_{z})dV\\
-\end{matrix}$$
-
-$\Pi$の変化量$\delta\Pi = \delta T_{\text{in}} + \delta T_{\text{out}}$が0となるときの変位$u$の分布が，力がつり合っているときの解である．この状態を仮想仕事の原理とよび，式で表すと
-
-$$\begin{matrix}
-\int_{\Gamma}^{\ }{\left\{ \sigma \right\}^{T}\left\{ \text{δε} \right\} dV = \int_{S}^{\ }{\left\{ t \right\}^{T}\left\{ \text{δu} \right\}\text{dS}} + \int_{\Gamma}^{\ }{\left\{ b \right\}^{T}\left\{ \text{δu} \right\}\text{dV}}}\ \\
-\end{matrix}$$
-
-である．
-
-## 3.要素と節点
-2次元の有限要素法では材料を三角形または四角形要素に分割しそれぞれの要素の変位を求めていく． 本論文のモデルは4節点四角形要素で解析を行った．四角形要素は三角形要素に比べて同じ節点数でも要素数が少なくて済み，また要素内の応力分布，ひずみ分布を仮定しているので，滑らかな分布が得られる特徴があるからである．
-
-## 4.全体剛性方程式
-### 4.1.概要
-2次元有限要素法では分割した要素に対して剛性方程式を求め，すべての要素についての剛性方程式を合わせることで全体剛性方程式を作り，各節点の変位を求める．得られた節点変位からひずみ，応力が求められる．4.2，4.3，4.4で剛性方程式を求めるために必要な知識を示し，4.5で全体剛性方程式を示す． 
-
-### 4.2.*N*マトリックス
-*N*マトリックスは形状関数と呼ばれ，要素内の変位$u$を節点変位$u_{m}$で表すときに用いられるものである．
-
-要素内の変位*u*，*m*番目の要素の節点変位ベクトル*u~m~*，*m*番目の要素の*N*マトリックス*N~m~*の関係は
-
-$$\left\{ \mathbf{u} \right\}\mathbf{=}\begin{pmatrix}
-\mathbf{u} \\
-\mathbf{v} \\
-\end{pmatrix}\mathbf{=}\begin{bmatrix}
-\mathbf{N}_{\mathbf{1}} & \mathbf{0} & \mathbf{N}_{\mathbf{2}} & \mathbf{0} & \mathbf{N}_{\mathbf{3}} & \mathbf{0} & \mathbf{N}_{\mathbf{4}} & \mathbf{0} \\
-\mathbf{0} & \mathbf{N}_{\mathbf{1}} & \mathbf{0} & \mathbf{N}_{\mathbf{2}} & \mathbf{0} & \mathbf{N}_{\mathbf{3}} & \mathbf{0} & \mathbf{N}_{\mathbf{4}} \\
-\end{bmatrix}\begin{pmatrix}
-\mathbf{u}_{\mathbf{1}} \\
-\mathbf{v}_{\mathbf{1}} \\
-\mathbf{u}_{\mathbf{2}} \\
-\mathbf{v}_{\mathbf{2}} \\
-\mathbf{u}_{\mathbf{3}} \\
-\mathbf{v}_{\mathbf{3}} \\
-\mathbf{u}_{\mathbf{4}} \\
-\mathbf{v}_{\mathbf{4}} \\
-\end{pmatrix}$$
-
-$$\begin{matrix}
-\mathbf{=}\left\lbrack \mathbf{N}_{\mathbf{m}}\mathbf{(}\xi,\eta\mathbf{)} \right\rbrack\left\{ \mathbf{u}_{\mathbf{m}} \right\}\mathbf{\#}(2.3) \\
-\end{matrix}$$
-
-と表される．ここで*N~1~*，*N~2~*，*N~3~*，*N~4~*は次式で表される．
-
-$$\begin{matrix}
-N_{1} = \frac{1}{4}(1 - \xi)(1 - \eta)\#(2.4) \\
-\end{matrix}$$
-
-$$\begin{matrix}
-N_{2} = \frac{1}{4}(1 + \xi)(1 - \eta)\#(2.5) \\
-\end{matrix}$$
-
-$$\begin{matrix}
-N_{3} = \frac{1}{4}(1 + \xi)(1 + \eta)\#(2.6) \\
-\end{matrix}$$
-
-$$\begin{matrix}
-N_{4} = \frac{1}{4}(1 - \xi)(1 + \eta)\#(2.7) \\
-\end{matrix}$$
-
-$\xi$および$\eta$について説明する．四角形要素は任意の形状をとりうるので$x$-$y$座標のまま計算を行うのは何かと不便な点が多いそこで図2.1(a)のように局所座標系$O$-$\text{ξη}$をとる．$O$-$\text{ξη}$は各辺の中点を通りその切片が1となるように定義する．子の座標系による要素は2.1(b)のように一片の長さが2の正方形に変換される．
-
-### 4.3. *B*マトリックス
-
-*B*マトリックスは要素内におけるひずみを節点変位で表すときに用いられるものである．
-
-要素内のひずみε，節点変位*u~m~*，および*B*マトリックスの関係は
-
-$$\left\{ \mathbf{\varepsilon} \right\}\mathbf{=}\begin{bmatrix}
-\frac{\mathbf{\partial}\mathbf{N}_{\mathbf{1}}}{\mathbf{\partial x}} & \mathbf{0} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{2}}}{\mathbf{\partial x}} & \mathbf{0} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{3}}}{\mathbf{\partial x}} & \mathbf{0} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{4}}}{\mathbf{\partial x}} & \mathbf{0} \\
-\mathbf{0} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{1}}}{\mathbf{\partial y}} & \mathbf{0} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{2}}}{\mathbf{\partial y}} & \mathbf{0} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{3}}}{\mathbf{\partial y}} & \mathbf{0} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{4}}}{\mathbf{\partial y}} \\
-\frac{\mathbf{\partial}\mathbf{N}_{\mathbf{1}}}{\mathbf{\partial y}} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{1}}}{\mathbf{\partial x}} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{2}}}{\mathbf{\partial y}} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{2}}}{\mathbf{\partial x}} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{3}}}{\mathbf{\partial y}} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{3}}}{\mathbf{\partial x}} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{4}}}{\mathbf{\partial y}} & \frac{\mathbf{\partial}\mathbf{N}_{\mathbf{4}}}{\mathbf{\partial x}} \\
-\end{bmatrix}\mathbf{\ }\begin{pmatrix}
-\mathbf{u}_{\mathbf{1}} \\
-\mathbf{v}_{\mathbf{1}} \\
-\mathbf{u}_{\mathbf{2}} \\
-\mathbf{v}_{\mathbf{2}} \\
-\mathbf{u}_{\mathbf{3}} \\
-\mathbf{v}_{\mathbf{3}} \\
-\mathbf{u}_{\mathbf{4}} \\
-\mathbf{v}_{\mathbf{4}} \\
-\end{pmatrix}$$
-
-$$\begin{matrix}
-\mathbf{=}\mathbf{\lbrack B}_{\mathbf{m}}\mathbf{(}\xi,\eta\mathbf{)\rbrack}\left\{ \mathbf{u}_{\mathbf{m}} \right\}\mathbf{\#}(2.8) \\
-\end{matrix}$$
-
-と表すことができる．
-
-### 4.4. 全体剛性行列
-
-節点力{*F*}は表面力と物体力を各節点に加わる力として置き換えたものである．要素剛性マトリックス\[*K~m~*\]は*B*マトリックスおよび*D*マトリックスを用いて
-
-$$\begin{matrix}
-\left\lbrack K_{m} \right\rbrack = \int_{V_{m}}^{\ }{\left\lbrack B_{m} \right\rbrack^{T}\lbrack D\rbrack\left\lbrack B_{m} \right\rbrack\text{dV}}\#(2.10) \\
-\end{matrix}$$
-
-と表すことができる．全体剛性マトリックス\[*K*\]は\[*K~m~*\]の重ね合わせにより求めることができる．
-
-　全体剛性方程式は，仮想仕事の原理を変形させた式である．全体剛性マトリックス\[*K*\]，変位{*U*}，節点力{*F*}を用いて
-
-$$\begin{matrix}
-\lbrack K\rbrack\left\{ U \right\} = \left\{ F \right\}\#(2.9) \\
-\end{matrix}$$
-
-と表される．
-
+②深層学習による女優診断機能
+スクレイピングで画像を取得し分類する深層学習を行いました．
+[Step 1]
+認識したい人の名前を複数定義する.今回選んだ女優は，綾瀬はるかさん, 石田ゆり子さん, 新垣結衣さん, 深田恭子さん, 松岡茉優さんの5人
+[Step 2]
+スクレイピングでGoogle画像検索から画像を取得．今回は女優一人あたり300枚ほど取得した．
+[Step 3]
+本人が写っていない画像を削除(自力で).
+[Step 4]
+OpenCVを用いて，顔部分を抽出し切り抜く．
+[Step 5]
+本人が写っていない画像を削除(自力で).
+[Step 6]
+画像処理をして、画像の水増し．女優一人あたり約2000枚になった．
+[Step 7]
+用意した画像をトレーニングデータ、テストデータ，評価データの3つに割りふる．
+[Step 8]
+Kerasでモデルの構築、学習、評価．
+[＋α]
+Google Colaboratory → GPUを無料で利用して学習時間を短縮する．
 
