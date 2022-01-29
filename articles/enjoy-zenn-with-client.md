@@ -1,17 +1,18 @@
 ---
-title: "どの女優に似てるかな？アプリ(学生祭)"
+title: "どの女優に似てるかな？"
 emoji: "✨"
 type: "idea" # tech: 技術記事 / idea: アイデア
-topics: [OpenCV,keras]
+topics: [OpenCV,画像認識]
 published: true
 ---
 # この記事で書かれていること
 学生祭で展示したアプリの紹介をしていきます．撮影した写真の目と口を補正し，その写真に対してAIがどの女優に似ているのかを教えてくれる顔認証アプリを作成しました．
+![](https://storage.googleapis.com/zenn-user-upload/e29bbb0c12e1-20220129.jpg)
 
 # 誰に読んでもらいたいか
 この記事は誰かを楽しませるためにアプリを作ろうとしている人に向けて書いています．したがって技術的なことよりも，「〇〇な工夫をしたらどのような反応を頂けた」ということに重点をおいて説明していきます．
 
-# アプリの概要
+# アプリの手順説明
 展示の際に使用した説明書を基に流れを説明していきます．
 [Step 1]
 展示物であるパソコンを来場者が見た時に写っている画面です．私もそうですが，来場者がこの時点で求めているものは，アプリのおもしろさよりも操作がシンプルで分かりやすいかどうかです．したがって「スペースキーを押すだけで大丈夫！」という説明はとても重要です．(スペースキーがどこのキーなのかも)
@@ -19,34 +20,41 @@ published: true
 
 [Step 2]
 ここでアプリの説明をしていきます．来場者は緊張しているのでアイスブレイクのために冗談を言いましょう．私は「右の5人の女優は全員自分の好みの女優なんですよ」と伝えると場が和みました．
-![](https://storage.googleapis.com/zenn-user-upload/cef825445580-20220116.jpg)
+![](https://storage.googleapis.com/zenn-user-upload/ff44a579f724-20220129.jpg)
 
 [Step 3]
 まずプリクラ撮影を行っていきます．多くの女性は何も補正がないカメラを嫌う傾向があるのでプリクラ機能を実装しました．
 余談...ゲームセンターなどにあるプリクラの技術はとても高いことを知りました．私の技術力では逆に無加工の写真より，プリクラ写真の方が可愛くない事態となってしまいました．しかしながら，これはこれで笑ってくれたり，撮影への抵抗感が少なくなったので良かったです．
 当初はWindows上でSnowやB615などのアンドロイドカメラアプリを動かそうと考えていました(Androidエミュレーター)．しかしながらノートパソコンのスペックでは動作が重かったので断念しました．
-![](https://storage.googleapis.com/zenn-user-upload/928352cfc97a-20220116.jpg)
+![](https://storage.googleapis.com/zenn-user-upload/663d1cf0eefa-20220129.jpg)
 
 [Step 4]
-褒めます．ベタな演出ですがかなりの確率で場が和みます．
-![](https://storage.googleapis.com/zenn-user-upload/d78382f1224c-20220116.jpg)
+実際に映し出される画面です．スペースを押すと撮影が出来ます．顔全体，目，口をOpenCVにより検出しています．OpenCVとは、Open Souece Computer Vision Libraryの略で、画像や動画を処理するための機能がまとめて実装されているオープンソースのライブラリのことです．OpenCVで口を検出する際，笑顔かどうか識別することができます．笑顔を検出するとNiceSmileと表示されるようにしました．
+![](https://storage.googleapis.com/zenn-user-upload/3470153a67e8-20220129.jpg)
 
 [Step 5]
-プリクラ撮影の後は本題のAI診断です．「診断対象となる5人の女優って誰だったっけ？」となるころなので再度画面に表示して説明することが大事です．
-![](https://storage.googleapis.com/zenn-user-upload/0e741eb56086-20220116.jpg)
+撮影が終わると目と口を補正したプリクラ写真が出てきます．
+![](https://storage.googleapis.com/zenn-user-upload/c9ed7b2adc97-20220129.jpg)
 
 [Step 6]
-結果を表示します．AI(深層学習)が最も似ている女優を教えてくれます．具体的には綾瀬はるかさんに56 %似ている．新垣結衣に13 %似ている...といった感じで合計が100 %になるように5人の女優の似ている度を算出し，そして最も確率が高かった女優名を表示しています．
-![](https://storage.googleapis.com/zenn-user-upload/6ee4e161a3dc-20220116.jpg)
+褒めます．ベタな演出ですがかなりの確率で場が和みます．
+![](https://storage.googleapis.com/zenn-user-upload/14fd665c1fa5-20220129.jpg)
 
 [Step 7]
+プリクラ撮影の後は本題のAI診断です．「診断対象となる5人の女優って誰だったっけ？」となるころなので再度画面に表示して説明することが大事です．
+![](https://storage.googleapis.com/zenn-user-upload/fcab045c8d86-20220129.jpg)
+
+[Step 8]
+結果を表示します．AI(深層学習)が最も似ている女優を教えてくれます．具体的には綾瀬はるかさんに56 %似ている．新垣結衣に13 %似ている...といった感じで合計が100 %になるように5人の女優の似ている度を算出し，そして最も確率が高かった女優名を表示しています．
+![](https://storage.googleapis.com/zenn-user-upload/08807211772a-20220129.jpg)
+
+[Step 9]
 おわりです．スペースキーを押すと[Step 1]の画面に戻ります．
-![](https://storage.googleapis.com/zenn-user-upload/2f2849abd6db-20220116.jpg)
+![](https://storage.googleapis.com/zenn-user-upload/04cdecc93e22-20220129.jpg)
 
 # 技術的背景
 ➀プリクラ機能
 目を大きくする機能を搭載したプリクラを作成しました．
-〇プリクラ補正
 [Step 1]
 OpenCVを用いて写真内の目がある範囲を四角形で囲み切り取る，
 [Step 2]
